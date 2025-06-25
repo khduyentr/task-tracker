@@ -1,0 +1,17 @@
+# Java class files
+*.class
+
+# IntelliJ project files
+.idea/
+*.iml
+
+# macOS
+.DS_Store
+
+# Output folders
+out/
+target/
+build/
+
+# Logs
+*.log
