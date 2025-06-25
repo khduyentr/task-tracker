@@ -67,6 +67,7 @@ public class TaskCLI {
                     };
                     repository.listTasks(label);
                 }
+                break;
             default:
                 System.out.println("Unknown command: " + command);
                 break;

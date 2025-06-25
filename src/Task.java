@@ -9,13 +9,15 @@ public class Task {
     private TaskStatus status;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static int lastest_id = 0;
 
 
     public Task(String description) {
         this.description = description;
 
         // TODO: handle auto-increment later
-        this.id = 1;
+        lastest_id++;
+        this.id = lastest_id;
         this.status = TaskStatus.TODO;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -63,16 +65,17 @@ public class Task {
     public String toJson() {
 
         return "{" +
-                "id:" + this.id + "," +
-                "description:" + this.description + "," +
-                "status:" + this.status.toString() + "," +
-                "createdAt:" + this.createdAt.format(formatter) + "," +
-                "updatedAt:" + this.updatedAt.format(formatter) +
+                "\"id\":" + "\"" +this.id + "\"," +
+                "\"description\":" + "\"" + this.description + "\"," +
+                "\"status\":" + "\"" +this.status.toString() + "\"," +
+                "\"createdAt\":" + "\"" + this.createdAt.format(formatter) + "\"," +
+                "\"updatedAt\":" + "\"" + this.updatedAt.format(formatter) + "\"" +
                 "}";
     }
 
     public static Task fromJson(String detail) {
-        String taskDetail = detail.replace("{", "").replace("}", "");
+        String taskDetail = detail.replace("{", "").replace("}", "").replace("\"","");
+        System.out.println(taskDetail);
         String[] fields = taskDetail.split(",");
 
         String id = fields[0].split(":")[1].strip();
@@ -84,6 +87,10 @@ public class Task {
         TaskStatus status = TaskStatus.getStatusByLabel(statusLabel);
         LocalDateTime createdTime = LocalDateTime.parse(createdAtStr, formatter);
         LocalDateTime updatedTime = LocalDateTime.parse(updatedAtStr, formatter);
+
+        if (Integer.parseInt(id) > lastest_id) {
+            lastest_id = Integer.parseInt(id);
+        }
 
         return new Task(Integer.parseInt(id), description, status, createdTime, updatedTime);
     }
