@@ -10,15 +10,15 @@ public class Task {
     private boolean softDeleted;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-    private static int lastest_id = 0;
+    private static int latestId = 0;
 
 
     public Task(String description) {
         this.description = description;
 
         // TODO: handle auto-increment later
-        lastest_id++;
-        this.id = lastest_id;
+        latestId++;
+        this.id = latestId;
         this.status = TaskStatus.TODO;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -93,8 +93,8 @@ public class Task {
         LocalDateTime updatedTime = LocalDateTime.parse(updatedAtStr, formatter);
         boolean softDeleted = !deletedStatus.equals("false");
 
-        if (Integer.parseInt(id) > lastest_id) {
-            lastest_id = Integer.parseInt(id);
+        if (Integer.parseInt(id) > latestId) {
+            latestId = Integer.parseInt(id);
         }
 
         return new Task(Integer.parseInt(id), description, status, createdTime, updatedTime, softDeleted);

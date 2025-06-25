@@ -9,9 +9,17 @@ import java.util.Optional;
 public class TaskRepository {
     private final Path FILE_PATH = Path.of("tasks.json");
     private List<Task> tasks;
+    private static TaskRepository _instance;
 
-    public TaskRepository() {
+    private TaskRepository() {
         tasks = loadSavedTasks();
+    }
+
+    public static TaskRepository getInstance() {
+        if (_instance == null) {
+            _instance = new TaskRepository();
+        }
+        return _instance;
     }
 
     private List<Task> loadSavedTasks() {
@@ -50,7 +58,7 @@ public class TaskRepository {
         // only show not deleted item
         List<Task> filtered = tasks.stream().filter((item) -> !item.isDeleted()).toList();;
         if (!Objects.equals(status, "All")) {
-            filtered = tasks.stream().filter((item) -> Objects.equals(item.getStatus().getLabel(), status)).toList();
+            filtered = filtered.stream().filter((item) -> Objects.equals(item.getStatus().getLabel(), status)).toList();
         }
 
 
