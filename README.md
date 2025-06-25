@@ -1,5 +1,6 @@
 # ✅ TaskCLI — Simple Java Task Manager
 
+This project is inspired by the [Task Tracker project from roadmap.sh](https://roadmap.sh/projects/task-tracker).
 A command-line based task manager written in **pure Java** that:
 
 - Stores tasks in a `tasks.json` file  
