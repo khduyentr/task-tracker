@@ -7,26 +7,31 @@ public class Task {
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private TaskStatus status;
+    private boolean softDeleted;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+    private static int latestId = 0;
 
 
     public Task(String description) {
         this.description = description;
 
         // TODO: handle auto-increment later
-        this.id = 1;
+        latestId++;
+        this.id = latestId;
         this.status = TaskStatus.TODO;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.softDeleted = false;
     }
 
-    public Task(Integer id, String description, TaskStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Task(Integer id, String description, TaskStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, boolean softDeleted) {
         this.id = id;
         this.description = description;
         this.status = status;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.softDeleted = softDeleted;
     }
 
     public Integer getId() {
@@ -63,16 +68,17 @@ public class Task {
     public String toJson() {
 
         return "{" +
-                "id:" + this.id + "," +
-                "description:" + this.description + "," +
-                "status:" + this.status.toString() + "," +
-                "createdAt:" + this.createdAt.format(formatter) + "," +
-                "updatedAt:" + this.updatedAt.format(formatter) +
+                "\"id\":" + "\"" +this.id + "\"," +
+                "\"description\":" + "\"" + this.description + "\"," +
+                "\"status\":" + "\"" +this.status.toString() + "\"," +
+                "\"createdAt\":" + "\"" + this.createdAt.format(formatter) + "\"," +
+                "\"updatedAt\":" + "\"" + this.updatedAt.format(formatter) + "\"," +
+                "\"deleted\":" + "\"" + this.softDeleted + "\"" +
                 "}";
     }
 
     public static Task fromJson(String detail) {
-        String taskDetail = detail.replace("{", "").replace("}", "");
+        String taskDetail = detail.replace("{", "").replace("}", "").replace("\"","");
         String[] fields = taskDetail.split(",");
 
         String id = fields[0].split(":")[1].strip();
@@ -80,12 +86,18 @@ public class Task {
         String statusLabel = fields[2].split(":")[1].strip();
         String createdAtStr = fields[3].split("[a-z]:")[1].strip();
         String updatedAtStr = fields[4].split("[a-z]:")[1].strip();
+        String deletedStatus = fields[5].split(":")[1].strip();
 
         TaskStatus status = TaskStatus.getStatusByLabel(statusLabel);
         LocalDateTime createdTime = LocalDateTime.parse(createdAtStr, formatter);
         LocalDateTime updatedTime = LocalDateTime.parse(updatedAtStr, formatter);
+        boolean softDeleted = !deletedStatus.equals("false");
 
-        return new Task(Integer.parseInt(id), description, status, createdTime, updatedTime);
+        if (Integer.parseInt(id) > latestId) {
+            latestId = Integer.parseInt(id);
+        }
+
+        return new Task(Integer.parseInt(id), description, status, createdTime, updatedTime, softDeleted);
     }
 
     @Override
@@ -96,5 +108,14 @@ public class Task {
                 " - Status: " + this.status.getLabel() + "\n" +
                 " - Created at: " + this.createdAt.toString() + "\n" +
                 " - Updated at: " + this.updatedAt.toString() + "\n";
+    }
+
+    public boolean isDeleted() {
+        return this.softDeleted;
+    }
+
+    public void setDeleted(boolean softDeleted) {
+        this.softDeleted = softDeleted;
+        this.updatedAt = LocalDateTime.now();
     }
 }

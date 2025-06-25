@@ -9,9 +9,17 @@ import java.util.Optional;
 public class TaskRepository {
     private final Path FILE_PATH = Path.of("tasks.json");
     private List<Task> tasks;
+    private static TaskRepository _instance;
 
-    public TaskRepository() {
+    private TaskRepository() {
         tasks = loadSavedTasks();
+    }
+
+    public static TaskRepository getInstance() {
+        if (_instance == null) {
+            _instance = new TaskRepository();
+        }
+        return _instance;
     }
 
     private List<Task> loadSavedTasks() {
@@ -23,6 +31,11 @@ public class TaskRepository {
 
         try {
             String content = Files.readString(FILE_PATH);
+
+            if (content.isEmpty()) {
+                return tasks;
+            }
+
             String[] taskList = content.replace("[", "").replace("]", "").split("},");
 
             for (String taskJson: taskList) {
@@ -42,11 +55,15 @@ public class TaskRepository {
     }
 
     public void listTasks(String status) {
-        List<Task> filtered;
-        if (Objects.equals(status, "All")) {
-            filtered = tasks;
-        } else {
-            filtered = tasks.stream().filter((item) -> Objects.equals(item.getStatus().getLabel(), status)).toList();
+        // only show not deleted item
+        List<Task> filtered = tasks.stream().filter((item) -> !item.isDeleted()).toList();;
+        if (!Objects.equals(status, "All")) {
+            filtered = filtered.stream().filter((item) -> Objects.equals(item.getStatus().getLabel(), status)).toList();
+        }
+
+
+        if (filtered.isEmpty()) {
+            System.out.println("Nothing has been found!");
         }
 
         for (Task task: filtered) {
@@ -89,11 +106,11 @@ public class TaskRepository {
 
     public void deleteTask(Integer id) {
         Task task = getTaskById(id).orElseThrow(() -> new IllegalArgumentException("Task @" + id + " not found!"));
-        if (tasks.remove(task)) {
-            System.out.println("Task deleted successfully (id: " + id + ")");
-        } else {
-            System.out.println("Task deleted failed (id: " + id + ")");
+        if (task.isDeleted()) {
+            System.out.println("Task @" + id + " is already deleted");
         }
+        task.setDeleted(true);
+        System.out.println("Task deleted successfully (id: " + id + ")");
     }
 
     public void markDone(Integer id) {

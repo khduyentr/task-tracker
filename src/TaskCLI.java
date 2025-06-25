@@ -1,6 +1,6 @@
 public class TaskCLI {
     public static void main(String[] args) {
-        TaskRepository repository = new TaskRepository();
+        TaskRepository repository = TaskRepository.getInstance();
 
         if (args.length < 1) {
             System.out.println("Usage: <command> [arguments]");
@@ -67,6 +67,7 @@ public class TaskCLI {
                     };
                     repository.listTasks(label);
                 }
+                break;
             default:
                 System.out.println("Unknown command: " + command);
                 break;

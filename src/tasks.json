@@ -1,3 +1,5 @@
 [
-{id:1,description:Do something,status:To-do,createdAt:2025-06-25T17:06:38.289212,updatedAt:2025-06-25T17:06:38.289222}
+{"id":"1","description":"change delete to softdelete","status":"To-do","createdAt":"2025-06-25T22:41:46.5832525","updatedAt":"2025-06-25T22:42:41.0288465","deleted":"true"},
+{"id":"2","description":"change repository to singleton pattern","status":"To-do","createdAt":"2025-06-25T22:42:14.4730337","updatedAt":"2025-06-25T22:42:14.4730337","deleted":"false"},
+{"id":"3","description":"new name updated","status":"In-progress","createdAt":"2025-06-25T22:50:36.2312053","updatedAt":"2025-06-25T22:51:34.5244352","deleted":"false"}
 ]
